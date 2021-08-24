@@ -1,0 +1,24 @@
+{
+	"main": "index.html",
+	"logo": "logo.png",
+	"preload": "preload.js",
+	"features": [
+		{
+			"code": "time",
+			"explain": "show time",
+			"cmds": [
+				"time",
+				"t",
+				"时间"
+			]
+		},
+		{
+			"code": "settings",
+			"explain": "Settings time",
+			"cmds": [
+				"设置time",
+				"time设置"
+			]
+		}
+	]
+}

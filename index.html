@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/element-ui.css">
+    <link href="./css/index.css" rel="stylesheet" type="text/css" />
+</head>
+
+
+<script src="./js/vue2.js"></script>
+<script src="./js/element-ui.js"></script>
+
+<body>
+    <div id="text">
+        <div id="header_slogan"></div>
+        <div id="date">
+            <div class="parts" id="date_div"></div>
+            <div class="mask" id="year">
+                <div class="p"></div>
+            </div>
+            <div class="mask" id="month">
+                <div class="p"></div>
+            </div>
+        </div>
+        <div id="time">
+            <div class="parts" id="time_div"></div>
+            <div class="mask" id="d">
+                <div class="p"></div>
+            </div>
+            <div class="mask" id="h">
+                <div class="p"></div>
+            </div>
+            <div class="mask" id="m">
+                <div class="p"></div>
+            </div>
+        </div>
+        <div id="footer_slogan"></div>
+        <div id="friend_div">
+            <div id="birthday_div" class="birthday"></div>
+        </div>
+    </div>
+    <script src="./js/index.js"></script>
+
+    <div id="app">
+        <el-dialog :visible.sync="dialogVisible" v-bind="$attrs" v-on="$listeners" @open="onOpen" @close="onClose"
+            title="Utime配置">
+            <el-form ref="elForm" :model="formData" :rules="rules" size="small" label-width="100px"
+                label-position="left">
+                <el-row type="flex" justify="start" align="top">
+                    <el-form-item label="水平" prop="position_h">
+                        <el-select v-model="formData.position_h" placeholder="请选择下拉选择水平" clearable
+                            :style="{width: '100%'}">
+                            <el-option v-for="(item, index) in position_hOptions" :key="index" :label="item.label"
+                                :value="item.value" :disabled="item.disabled"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="垂直" prop="position_v">
+                        <el-select v-model="formData.position_v" placeholder="请选择垂直" clearable :style="{width: '100%'}">
+                            <el-option v-for="(item, index) in position_vOptions" :key="index" :label="item.label"
+                                :value="item.value" :disabled="item.disabled"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="时间字号" prop="time_size" required>
+                        <el-slider :max='150' :step='1' v-model="formData.time_size"></el-slider>
+                    </el-form-item>
+                    <el-form-item label="日期字号" prop="date_size" required>
+                        <el-slider :max='150' :step='1' v-model="formData.date_size"></el-slider>
+                    </el-form-item>
+                    <el-form-item label="进度条长度" prop="scroll_size" required>
+                        <el-slider :max='150' :step='1' v-model="formData.scroll_size"></el-slider>
+                    </el-form-item>
+                    <el-form-item label="12/24制" prop="time12or24">
+                        <el-select v-model="formData.time12or24" placeholder="请选择12/24制" filterable clearable
+                            :style="{width: '100%'}">
+                            <el-option v-for="(item, index) in time12or24Options" :key="index" :label="item.label"
+                                :value="item.value" :disabled="item.disabled"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="上方标题" prop="header_slogan">
+                        <el-input v-model="formData.header_slogan" placeholder="时光飞逝" clearable
+                            :style="{width: '100%'}">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="上标题字号" prop="header_slogan_size" required>
+                        <el-slider :max='150' :step='1' v-model="formData.header_slogan_size"></el-slider>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="下方标题" prop="footer_slogan">
+                        <el-input v-model="formData.footer_slogan" placeholder="Time flows away下方标题" clearable
+                            :style="{width: '100%'}"></el-input>
+                    </el-form-item>
+                    <el-form-item label="下标题字号" prop="footer_slogan_size" required>
+                        <el-slider :max='150' :step='1' v-model="formData.footer_slogan_size"></el-slider>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label-width="137px" label="显示活了多少天" prop="birthday" required>
+                        <el-switch v-model="formData.birthday" active-text="启用" inactive-text="禁用"></el-switch>
+                    </el-form-item>
+                    <el-form-item label-width="137px" label="显示类型" prop="birthday_string_type" required>
+                        <el-switch v-model="formData.birthday_string_type" active-text="详细" inactive-text="天"
+                            :active-value='"a"' :inactive-value='"b"'></el-switch>
+                    </el-form-item>
+                    <el-form-item label="出生日期" prop="birthday_string">
+                        <el-date-picker v-model="formData.birthday_string" format="yyyy.MM.dd" value-format="yyyy.MM.dd"
+                            :style="{width: '100%'}" placeholder="请选择出生日期" clearable></el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="文字前缀" prop="suffix_birthday_string">
+                        <el-input v-model="formData.suffix_birthday_string" placeholder="请输入文字前缀" clearable
+                            :style="{width: '100%'}"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文字后缀" prop="prefix_birthday_string">
+                        <el-input v-model="formData.prefix_birthday_string" placeholder="请输入文字后缀" clearable
+                            :style="{width: '100%'}"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文字字号" prop="birthday_string_size" required>
+                        <el-slider :max='150' :step='1' v-model="formData.birthday_string_size"></el-slider>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="文字" prop="text_color" required>
+                        <el-color-picker v-model="formData.text_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="年" prop="year_color" required>
+                        <el-color-picker v-model="formData.year_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="月" prop="month_color" required>
+                        <el-color-picker v-model="formData.month_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="日" prop="day_color" required>
+                        <el-color-picker v-model="formData.day_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="小时" prop="hour_color" required>
+                        <el-color-picker v-model="formData.hour_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="分钟" prop="min_color" required>
+                        <el-color-picker v-model="formData.min_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                    <el-form-item label="纯色背景" prop="body_color" required>
+                        <el-color-picker v-model="formData.body_color" size="medium" color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+
+                    <el-form-item label="图片背景">
+                        <el-upload :before-upload="background_imageBeforeUpload" list-type="picture" accept="image/*">
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">点击上传</em></div>
+                            <!-- <el-button size="small" type="primary" icon="el-icon-upload">点击选择图片</el-button> -->
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="图片时钟遮罩层" prop="text_opacity_color">
+                        <el-color-picker v-model="formData.text_opacity_color" size="medium" show-alpha
+                            color-format="rgb">
+                        </el-color-picker>
+                    </el-form-item>
+                </el-row>
+            </el-form>
+            <div slot="footer">
+                <el-button type="primary" @click="handelConfirm" plain>确定</el-button>
+                <el-button @click="close" plain>取消</el-button>
+                <el-button @click="clearimg" plain>清空图片</el-button>
+                <el-button type="warning" @click="setefault = true" plain>恢复默认值</el-button>
+                <el-dialog append-to-body title="提示" :visible.sync="setefault" width="30%" :before-close="hcSetDefault">
+                    <span>是否恢复默认值</span>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="setefault = false;" plain>取 消</el-button>
+                        <el-button type="primary" @click="setefault = false;setdefault()" plain>确 定</el-button>
+                    </span>
+                </el-dialog>
+            </div>
+        </el-dialog>
+
+
+
+    </div>
+</body>
+
+<script>
+
+    window.vue = new Vue({
+        el: '#app',
+        inheritAttrs: false,
+        components: {},
+        props: [],
+        data() {
+            return {
+                setefault: false,
+                dialogVisible: false,
+                formData: {
+                    position_h: "center",
+                    position_v: "center",
+                    time_size: 70,
+                    date_size: 60,
+                    scroll_size: 70,
+                    time12or24: 24,
+                    header_slogan: "时光飞逝",
+                    header_slogan_size: 60,
+                    footer_slogan: "Time flows away",
+                    footer_slogan_size: 55,
+                    birthday: false,
+                    birthday_string_type: "b",
+                    birthday_string: "1900.1.1",
+                    suffix_birthday_string: "度过了",
+                    prefix_birthday_string: "天",
+                    birthday_string_size: 0,
+                    text_color: "",
+                    year_color: "",
+                    month_color: "",
+                    day_color: "",
+                    hour_color: "",
+                    min_color: "",
+                    body_color: "",
+                    background_image: {
+                        "default": '',
+                        "value": ''
+                    },
+                    text_opacity_color: "",
+                },
+                rules: {
+                    position_h: [{
+                        required: true,
+                        message: '请选择下拉选择水平',
+                        trigger: 'change'
+                    }],
+                    position_v: [{
+                        required: true,
+                        message: '请选择垂直',
+                        trigger: 'change'
+                    }],
+                    time12or24: [{
+                        required: true,
+                        message: '请选择12/24制',
+                        trigger: 'change'
+                    }],
+                    header_slogan: [{
+                        required: true,
+                        message: '时光飞逝',
+                        trigger: 'blur'
+                    }],
+                    footer_slogan: [{
+                        required: true,
+                        message: 'Time flows away下方标题',
+                        trigger: 'blur'
+                    }],
+                    birthday_string: [{
+                        required: true,
+                        message: '请选择出生日期',
+                        trigger: 'change'
+                    }],
+                    suffix_birthday_string: [{
+                        required: true,
+                        message: '请输入文字前缀',
+                        trigger: 'blur'
+                    }],
+                    prefix_birthday_string: [{
+                        required: true,
+                        message: '请输入文字后缀',
+                        trigger: 'blur'
+                    }],
+                },
+                background_imageAction: 'https://jsonplaceholder.typicode.com/posts/',
+                background_imagefileList: [],
+                position_hOptions: [{
+                    "label": "左",
+                    "value": "flex-start"
+                }, {
+                    "label": "中",
+                    "value": "center"
+                }, {
+                    "label": "右",
+                    "value": "flex-end"
+                }],
+                position_vOptions: [{
+                    "label": "上",
+                    "value": "flex-start"
+                }, {
+                    "label": "中",
+                    "value": "center"
+                }, {
+                    "label": "下",
+                    "value": "flex-end"
+                }],
+                time12or24Options: [{
+                    "label": "12",
+                    "value": 12
+                }, {
+                    "label": "24",
+                    "value": 24
+                }],
+            }
+        },
+        computed: {},
+        watch: {},
+        created() { },
+        mounted() {
+            let properties = window.readconfig
+            // console.log(properties);
+            this.formData.date_size = properties['date_size'].value
+            this.formData.time_size = properties['time_size'].value
+            this.formData.header_slogan = properties['header_slogan'].value
+            this.formData.header_slogan_size = properties['header_slogan_size'].value
+            this.formData.footer_slogan = properties['footer_slogan'].value
+            this.formData.footer_slogan_size = properties['footer_slogan_size'].value
+            this.formData.position_h = properties['position_h'].value
+            this.formData.position_v = properties['position_v'].value
+            this.formData.time12or24 = properties['12_24'].value
+            this.formData.birthday = properties['birthday'].value
+            this.formData.birthday_string = properties['birthday_string'].value
+            this.formData.prefix_birthday_string = properties['prefix_birthday_string'].value
+            this.formData.suffix_birthday_string = properties['suffix_birthday_string'].value
+            this.formData.birthday_string_size = properties['birthday_string_size'].value
+            this.formData.birthday_string_type = properties['birthday_string_type'].value
+            this.formData.background_image.value = properties['background_image'].value
+            this.formData.background_image.default = properties['background_image'].default
+            this.formData.body_color = properties['body_color'].value
+            this.formData.min_color = properties['min_color'].value
+            this.formData.hour_color = properties['hour_color'].value
+            this.formData.month_color = properties['month_color'].value
+            this.formData.year_color = properties['year_color'].value
+            this.formData.day_color = properties['day_color'].value
+            this.formData.text_color = properties['text_color'].value
+            this.formData.scroll_size = properties['scroll_size'].value
+            this.formData.text_opacity_color = properties['text_opacity_color'].value
+        },
+        methods: {
+            onOpen() { },
+            onClose() {
+                this.$refs['elForm'].resetFields()
+            },
+            close() {
+                this.dialogVisible = false
+                this.$emit('update:visible', false)
+                window.init()
+            },
+            handelConfirm() {
+                // console.log(this.formData);
+                // console.log(this.formData.length);
+                this.setconfig(this.formData)
+                this.$refs['elForm'].validate(valid => {
+                    if (!valid) return
+                    this.close()
+                })
+            },
+            background_imageBeforeUpload(file) {
+                // let isRightSize = file.size / 1024 / 1024 < 2
+                // if (!isRightSize) {
+                //     this.$message.error('文件大小超过 2MB')
+                // }
+                // let isAccept = new RegExp('image/*').test(file.type)
+                // if (!isAccept) {
+                //     this.$message.error('应该选择image/*类型的文件')
+                // }
+                let path = file.path
+                // console.log(path);
+                // // if (path != '') {
+                // console.log(path);
+                this.formData.background_image.value = path.replace(/\\/g, "/")
+                this.formData.background_image.default = ''
+                this.$message({
+                    message: '图片选择成功',
+                    type: 'success'
+                });
+                // } else {
+                //     this.$message.error('错误！');
+                // }
+
+                // // return isRightSize && isAccept
+            },
+            clearimg() {
+                this.formData.background_image.value = ''
+                this.formData.background_image.default = ''
+                this.$message({
+                    message: '成功，请保存',
+                    type: 'success'
+                });
+            },
+            setdefault() {
+                window.setDefault()
+                this.close()
+            },
+            hcSetDefault(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                    })
+                    .catch(_ => { });
+            },
+            setconfig(formData) {
+                let properties = window.readconfig
+                // console.log(formData);
+                properties['date_size'].value = formData.date_size
+                properties['time_size'].value = formData.time_size
+                properties['header_slogan'].value = formData.header_slogan
+                properties['header_slogan_size'].value = formData.header_slogan_size
+                properties['footer_slogan'].value = formData.footer_slogan
+                properties['footer_slogan_size'].value = formData.footer_slogan_size
+                properties['position_h'].value = formData.position_h
+                properties['position_v'].value = formData.position_v
+                properties['12_24'].value = formData.time12or24
+                properties['birthday'].value = formData.birthday
+                properties['birthday_string'].value = formData.birthday_string
+                properties['prefix_birthday_string'].value = formData.prefix_birthday_string
+                properties['suffix_birthday_string'].value = formData.suffix_birthday_string
+                properties['birthday_string_size'].value = formData.birthday_string_size
+                properties['birthday_string_type'].value = formData.birthday_string_type
+                properties['background_image'] = formData.background_image
+                properties['body_color'].value = formData.body_color
+                properties['min_color'].value = formData.min_color
+                properties['hour_color'].value = formData.hour_color
+                properties['month_color'].value = formData.month_color
+                properties['year_color'].value = formData.year_color
+                properties['day_color'].value = formData.day_color
+                properties['text_color'].value = formData.text_color
+                properties['scroll_size'].value = formData.scroll_size
+                properties['text_opacity_color'].value = formData.text_opacity_color
+                window.readconfig = properties
+                window.submitConfig(properties)
+                // console.log(properties);
+                // properties['from_friend_tips'].value=formData.from_friend_tips
+                // properties['text_opacity'].value=formData.text_opacity
+                // properties['text_opacity_color'].value=formData.text_opacity_color
+            }
+        }
+    })
+</script>
+
+<style>
+    .el-upload__tip {
+        line-height: 1.2;
+    }
+
+    .el-table thead,
+
+    .el-table__header-wrapper {
+
+        display: none;
+
+    }
+</style>
+
+
+</html>
