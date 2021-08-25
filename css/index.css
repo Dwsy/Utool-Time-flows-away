@@ -3,6 +3,9 @@ body, html {
     margin: 0
 }
 
+
+body{ overflow-x:hidden;}
+body{ overflow-y:hidden;}
 body {
     background-color: #161616;
     font-family: 'Microsoft JhengHei', sans-serif;

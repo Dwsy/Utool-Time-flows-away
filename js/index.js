@@ -74,7 +74,13 @@
                     if (otherVariable.birthday_string_type === 'b') {
                         totalDays = Math.floor(number / 86400000);
                     } else if (otherVariable.birthday_string_type === 'a') {
-                        totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
+                        let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+                        let newStartDate = new Date(startDate)
+                        let year = now.getFullYear() - newStartDate.getFullYear()
+                        let month = now.getMonth() - newStartDate.getMonth() 
+                        let day = now.getDate() - newStartDate.getDate()
+                        totalDays = year + '年' + month + '个月零' + day;
+                        // totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
                     }
                     doc.getElementById('birthday_div').textContent = otherVariable.pre_birthday + totalDays + otherVariable.suf_birthday;
                 } else {
@@ -116,6 +122,7 @@
     if (properties['birthday']) {
         otherVariable.birthday = properties['birthday'].value;
     }
+    console.log(properties['birthday_string'] );
     if (properties['birthday_string']) {
         let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
         otherVariable.birthday_string = (new Date(startDate)).getTime();
