@@ -74,13 +74,31 @@
                     if (otherVariable.birthday_string_type === 'b') {
                         totalDays = Math.floor(number / 86400000);
                     } else if (otherVariable.birthday_string_type === 'a') {
-                        let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
-                        let newStartDate = new Date(startDate)
-                        let year = now.getFullYear() - newStartDate.getFullYear()
-                        let month = now.getMonth() - newStartDate.getMonth() 
-                        let day = now.getDate() - newStartDate.getDate()
-                        totalDays = year + '年' + month + '个月零' + day;
-                        // totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
+
+                        // let dayMonth = [[0, 0], [31, 31], [28, 29], [31, 31], [30, 30], [31, 31], [30, 30], [31, 31], [31, 31], [30, 30], [31, 31], [30, 30], [31, 31]];
+                        // let LeapYear = new Function('year', 'if(((year%4)==0)&&((year%100)!=0)||((year%400)==0)){return true}return false');
+                        // function DateDiff(start) {
+                        //     start = new Date(start);
+                        //     end = new Date();
+                        //     if (end > start) {
+                        //         days = parseInt(Math.abs(end - start) / 1000 / 60 / 60 / 24);
+                        //     } else {
+                        //         days = '0';
+                        //     }
+                        //     return days;
+                        // }
+                        // let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+                        // let newStartDate = new Date(startDate)
+                        // let isLeapYear = LeapYear(newStartDate.getFullYear())
+                        // let year = now.getFullYear() - newStartDate.getFullYear()
+                        // let month = now.getMonth() - newStartDate.getMonth()
+                        // month == 1 ? month = 0 : 0;
+                        // let day = now.getDate() - newStartDate.getDate()
+                        // // totalDays = year + '年' + month + '个月零' + day;
+                        // // totalDays = year + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + day;
+                        // // totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
+                        // totalDays = DateDiff(properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/'))
+                        totalDays = window.birthday
                     }
                     doc.getElementById('birthday_div').textContent = otherVariable.pre_birthday + totalDays + otherVariable.suf_birthday;
                 } else {
@@ -94,6 +112,7 @@
         updateText();
     });
     properties = window.readconfig
+
     if (properties['date_size'])
         doc.getElementById('date').style.fontSize = properties['date_size'].value + 'px';
     if (properties['time_size'])
@@ -122,7 +141,7 @@
     if (properties['birthday']) {
         otherVariable.birthday = properties['birthday'].value;
     }
-    console.log(properties['birthday_string'] );
+    console.log(properties['birthday_string']);
     if (properties['birthday_string']) {
         let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
         otherVariable.birthday_string = (new Date(startDate)).getTime();
@@ -210,6 +229,7 @@
 
     window.addEventListener("resize", function () {
         console.log("------1");
+        properties = window.readconfig
         if (properties['date_size'])
             doc.getElementById('date').style.fontSize = properties['date_size'].value + 'px';
         if (properties['time_size'])

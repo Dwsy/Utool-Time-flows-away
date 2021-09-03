@@ -115,14 +115,18 @@
                         <el-date-picker v-model="formData.birthday_string" format="yyyy.MM.dd" value-format="yyyy.MM.dd"
                             :style="{width: '100%'}" placeholder="请选择出生日期" clearable></el-date-picker>
                     </el-form-item>
-                    <el-form-item label="文字前缀" prop="suffix_birthday_string">
-                        <el-input v-model="formData.suffix_birthday_string" placeholder="请输入文字前缀" clearable
+                    <el-form-item label="文字前缀" prop="prefix_birthday_string">
+                        <el-input v-model="formData.prefix_birthday_string" placeholder="请输入文字前缀" clearable
                             :style="{width: '100%'}"></el-input>
                     </el-form-item>
-                    <el-form-item label="文字后缀" prop="prefix_birthday_string">
-                        <el-input v-model="formData.prefix_birthday_string" placeholder="请输入文字后缀" clearable
+
+                    <el-form-item label="文字后缀" prop="suffix_birthday_string">
+                        <el-input v-model="formData.suffix_birthday_string" placeholder="请输入文字后缀" clearable
                             :style="{width: '100%'}"></el-input>
                     </el-form-item>
+
+
+
                     <el-form-item label="文字字号" prop="birthday_string_size" required>
                         <el-slider :max='150' :step='1' v-model="formData.birthday_string_size"></el-slider>
                     </el-form-item>
@@ -263,14 +267,14 @@
                         message: '请选择出生日期',
                         trigger: 'change'
                     }],
-                    suffix_birthday_string: [{
-                        required: true,
-                        message: '请输入文字前缀',
-                        trigger: 'blur'
-                    }],
                     prefix_birthday_string: [{
                         required: true,
                         message: '请输入文字后缀',
+                        trigger: 'blur'
+                    }],
+                    suffix_birthday_string: [{
+                        required: true,
+                        message: '请输入文字前缀',
                         trigger: 'blur'
                     }],
                 },
@@ -392,7 +396,7 @@
             },
             setdefault() {
                 window.setDefault()
-                this.close()
+                this.dialogVisible = false
             },
             hcSetDefault(done) {
                 this.$confirm('确认关闭？')
