@@ -65,7 +65,8 @@
                 timeMask.h.style.maxWidth = `${minAndSec / 36}%`;
                 timeMask.m.style.maxWidth = `${second / 0.6}%`;
             }
-            if (otherVariable.birthday === true) {
+            // if (otherVariable.birthday === true) {
+            if (otherVariable.birthday === 'dev') {
                 doc.getElementById('friend_div').style.display = 'inline';
                 if (otherVariable.birthday === true) {
                     doc.querySelector('.birthday').style.display = 'inline';
