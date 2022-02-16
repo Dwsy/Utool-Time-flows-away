@@ -12,7 +12,7 @@
 <script src="./js/element-ui.js"></script>
 
 <body onmousedown="b(event)">
-    <div id="text"  >
+    <div id="text">
         <div id="header_slogan"></div>
         <div id="date">
             <div class="parts" id="date_div"></div>
@@ -111,7 +111,7 @@
                         <el-switch v-model="formData.birthday" active-text="启用" inactive-text="禁用"></el-switch>
                     </el-form-item>
                     <el-form-item label-width="137px" label="显示类型" prop="birthday_string_type" required>
-                        <el-switch v-model="formData.birthday_string_type" active-text="详细：无效" inactive-text="天"
+                        <el-switch v-model="formData.birthday_string_type" active-text="详细" inactive-text="天"
                             :active-value='"a"' :inactive-value='"b"'></el-switch>
                     </el-form-item>
                     <el-form-item label="出生日期" prop="birthday_string">
@@ -206,8 +206,10 @@
     }
 </script>
 <script>
+    window.startVue = startVue
     function startVue(params) {
         if (params) {
+            console.log("startvue");
             window.vue = new Vue({
                 el: '#app',
                 inheritAttrs: false,
@@ -318,45 +320,48 @@
                             "label": "24",
                             "value": 24
                         }],
+                        properties: window.readconfig
                     }
                 },
                 computed: {},
                 watch: {},
                 created() { },
                 mounted() {
-                    let properties = window.readconfig
-                    // console.log(properties);
-                    this.formData.date_size = properties['date_size'].value
-                    this.formData.time_size = properties['time_size'].value
-                    this.formData.header_slogan = properties['header_slogan'].value
-                    this.formData.header_slogan_size = properties['header_slogan_size'].value
-                    this.formData.footer_slogan = properties['footer_slogan'].value
-                    this.formData.footer_slogan_size = properties['footer_slogan_size'].value
-                    this.formData.position_h = properties['position_h'].value
-                    this.formData.position_v = properties['position_v'].value
-                    this.formData.time12or24 = properties['12_24'].value
-                    this.formData.birthday = properties['birthday'].value
-                    this.formData.birthday_string = properties['birthday_string'].value
-                    this.formData.prefix_birthday_string = properties['prefix_birthday_string'].value
-                    this.formData.suffix_birthday_string = properties['suffix_birthday_string'].value
-                    this.formData.birthday_string_size = properties['birthday_string_size'].value
-                    this.formData.birthday_string_type = properties['birthday_string_type'].value
-                    this.formData.background_image.value = properties['background_image'].value
-                    this.formData.background_image.default = properties['background_image'].default
-                    this.formData.body_color = properties['body_color'].value
-                    this.formData.min_color = properties['min_color'].value
-                    this.formData.hour_color = properties['hour_color'].value
-                    this.formData.month_color = properties['month_color'].value
-                    this.formData.year_color = properties['year_color'].value
-                    this.formData.day_color = properties['day_color'].value
-                    this.formData.text_color = properties['text_color'].value
-                    this.formData.scroll_size = properties['scroll_size'].value
-                    this.formData.text_opacity_color = properties['text_opacity_color'].value
+                    this.init(JSON.parse(JSON.stringify(window.readconfig)))
                     this.startcore()
 
 
                 },
                 methods: {
+                    init(properties) {
+                        // console.log(properties);
+                        this.formData.date_size = properties['date_size'].value
+                        this.formData.time_size = properties['time_size'].value
+                        this.formData.header_slogan = properties['header_slogan'].value
+                        this.formData.header_slogan_size = properties['header_slogan_size'].value
+                        this.formData.footer_slogan = properties['footer_slogan'].value
+                        this.formData.footer_slogan_size = properties['footer_slogan_size'].value
+                        this.formData.position_h = properties['position_h'].value
+                        this.formData.position_v = properties['position_v'].value
+                        this.formData.time12or24 = properties['12_24'].value
+                        this.formData.birthday = properties['birthday'].value
+                        this.formData.birthday_string = properties['birthday_string'].value
+                        this.formData.prefix_birthday_string = properties['prefix_birthday_string'].value
+                        this.formData.suffix_birthday_string = properties['suffix_birthday_string'].value
+                        this.formData.birthday_string_size = properties['birthday_string_size'].value
+                        this.formData.birthday_string_type = properties['birthday_string_type'].value
+                        this.formData.background_image.value = properties['background_image'].value
+                        this.formData.background_image.default = properties['background_image'].default
+                        this.formData.body_color = properties['body_color'].value
+                        this.formData.min_color = properties['min_color'].value
+                        this.formData.hour_color = properties['hour_color'].value
+                        this.formData.month_color = properties['month_color'].value
+                        this.formData.year_color = properties['year_color'].value
+                        this.formData.day_color = properties['day_color'].value
+                        this.formData.text_color = properties['text_color'].value
+                        this.formData.scroll_size = properties['scroll_size'].value
+                        this.formData.text_opacity_color = properties['text_opacity_color'].value
+                    },
                     startcore() {
 
                         // setTimeout(console.log(), 300 )
@@ -432,17 +437,19 @@
                                         if (otherVariable.birthday === true) {
                                             doc.querySelector('.birthday').style.display = 'inline';
                                             let totalDays;
-
                                             let number = now.getTime() - otherVariable.birthday_string;
-                                            // console.log(number + "number ");
-                                            totalDays = Math.floor(number / 86400000);
-                                            // console.log(totalDays);
-                                            // if (otherVariable.birthday_string_type === 'b') {
-                                            //     totalDays = Math.floor(number / 86400000);
-                                            //     console.log(totalDays);
-                                            // } else if (otherVariable.birthday_string_type === 'abc') {
-                                            //     totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
-                                            // }
+                                            if (otherVariable.birthday_string_type === 'b') {
+                                                totalDays = Math.floor(number / 86400000);
+                                            } else if (otherVariable.birthday_string_type === 'a') {
+                                                totalDays = window.getCache()
+                                                // let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+                                                // let newStartDate = new Date(startDate)
+                                                // let year = now.getFullYear() - newStartDate.getFullYear()
+                                                // let month = now.getMonth() - newStartDate.getMonth()
+                                                // let day = now.getDate() - newStartDate.getDate()
+                                                // totalDays = year + '年' + month + '个月零' + day;
+                                                // totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
+                                            }
                                             doc.getElementById('birthday_div').textContent = otherVariable.pre_birthday + totalDays + otherVariable.suf_birthday;
                                         } else {
                                             doc.querySelector('.birthday').style.display = 'none';
@@ -689,9 +696,11 @@
 
                         })(document, window);
                     },
-                    onOpen() { },
+                    onOpen() {
+
+                    },
                     onClose() {
-                        this.$refs['elForm'].resetFields()
+                        // this.$refs['elForm'].resetFields()
                     },
                     close() {
                         this.dialogVisible = false
@@ -743,6 +752,8 @@
                     setdefault() {
                         window.setDefault()
                         this.dialogVisible = false
+                        this.init(JSON.parse(JSON.stringify(utools.dbStorage.getItem('defaultconfig'))))
+                        window.refresh()
                     },
                     hcSetDefault(done) {
                         this.$confirm('确认关闭？')
@@ -778,8 +789,9 @@
                         properties['text_color'].value = formData.text_color
                         properties['scroll_size'].value = formData.scroll_size
                         properties['text_opacity_color'].value = formData.text_opacity_color
-                        window.readconfig = properties
+                        this.properties = JSON.parse(JSON.stringify(properties))
                         window.submitConfig(properties)
+                        window.refresh()
                         // console.log(properties);
                         // properties['from_friend_tips'].value=formData.from_friend_tips
                         // properties['text_opacity'].value=formData.text_opacity
