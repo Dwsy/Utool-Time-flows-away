@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/element-ui.css">
+    <link href="./css/index.css" rel="stylesheet" type="text/css" />
+</head>
+
+
+<script src="./js/vue2.js"></script>
+<script src="./js/element-ui.js"></script>
+
+<body onmousedown="b(event)">
+    <div id="text">
+        <div id="header_slogan"></div>
+        <div id="date">
+            <div class="parts" id="date_div"></div>
+            <div class="mask" id="year">
+                <div class="p"></div>
+            </div>
+            <div class="mask" id="month">
+                <div class="p"></div>
+            </div>
+        </div>
+        <div id="time">
+            <div class="parts" id="time_div"></div>
+            <div class="mask" id="d">
+                <div class="p"></div>
+            </div>
+            <div class="mask" id="h">
+                <div class="p"></div>
+            </div>
+            <div class="mask" id="m">
+                <div class="p"></div>
+            </div>
+        </div>
+        <div id="footer_slogan"></div>
+        <span id="friend_div">
+            <div id="birthday_div" class="birthday"></div>
+        </span>
+        <div></div>
+        <span></span>
+        <div></div>
+        <span></span>
+    </div>
+
+
+    <div id="app">
+
+
+
+    </div>
+</body>
+<script>
+    document.onkeydown = function (e) {
+        let kc = e.keyCode
+        if (kc == 189) {
+            let oldconfig = utools.dbStorage.getItem('miniconfig')
+            let t = oldconfig.textRatio + 0.2
+            let s = oldconfig.scrollRatio + 0.15
+            // if (t <= 1) {
+            //     t = 1
+            // }
+            // if (s <= 1) {
+            //     s = 1
+            // }
+            let miniconfig = {
+                height: window.innerHeight*(oldconfig.textRatio/t),
+                width: window.innerWidth*(oldconfig.textRatio/t),
+                textRatio: t,
+                scrollRatio: s
+            }
+            // alert("-")
+            submitConfig(miniconfig)
+            // utools.dbStorage.setItem('miniconfig', miniconfig)
+            refresh()
+            // window.vue.startcore()
+        }
+        if (kc == 187) {
+            let oldconfig = utools.dbStorage.getItem('miniconfig')
+            let t = oldconfig.textRatio - 0.2
+            let s = oldconfig.scrollRatio - 0.15
+            if (t <= 1.25) {
+                t = 1.25
+            }
+            if (s <= 1.125) {
+                s = 1.125
+            }
+            let miniconfig = {
+                height: window.innerHeight*(oldconfig.textRatio/t),
+                width: window.innerWidth*(oldconfig.textRatio/t),
+                textRatio: t,
+                scrollRatio: s
+            }
+            // alert("+")
+            submitConfig(miniconfig)
+            // utools.dbStorage.setItem('miniconfig', miniconfig)
+            refresh()
+
+            // window.vue.startcore()
+        }
+    }
+    window.addEventListener("resize", function () {
+        let oldconfig = utools.dbStorage.getItem('miniconfig')
+        let t = oldconfig.textRatio
+        let s = oldconfig.scrollRatio
+        let miniconfig = {
+            height: window.innerHeight,
+            width: window.innerWidth,
+            textRatio: t,
+            scrollRatio: s
+        }
+        // alert("+")
+        vue.startcore()
+        submitConfig(miniconfig)
+    })
+    // "- 189 +187"
+// function b(event) {
+    //     var btnNum = event.button;
+    //     if (btnNum == 2) {
+    //         window.vue._data.dialogVisible = true
+    //         console.log("12312312312312");
+    //     }
+    // }
+</script>
+<script>
+
+    // start()
+
+    // window.setDefault = reDefaultConfig
+    // window.submitConfig = submitConfig
+    window.refresh = refresh
+    window.getCache = getCache
+    window.readconfig = readConfig()
+
+    if (window.readconfig['birthday_string'].value === '') {
+        window.readconfig['birthday_string'].value = new Date().Format("yyyy.MM.dd");
+    }
+    // start core index.js
+
+    window.startVue(true)
+
+
+    // function start() {
+    //     if (!utools.dbStorage.getItem('customer')) {
+    //         let now = new Date().Format("yyyy.MM.dd")
+    //         //console.log(now);
+    //         let defaultconfig
+    //         defaultconfig = { "12_24": { "options": [{ "label": "ui_12_24_24", "value": "24" }, { "label": "ui_12_24_12", "value": "12" }], "order": 107, "text": "12/24", "type": "combo", "value": 12 }, "background_image": { "default": "./defaultBackground.png", "value": "" }, "birthday": { "condition": "from_friend_tips.value==true", "order": 126, "text": "ui_birthday", "type": "bool", "value": true }, "birthday_string": { "condition": "from_friend_tips.value==true&&birthday.value==true", "order": 128, "text": "ui_birthday_string", "type": "textinput", "value": now }, "birthday_string_size": { "condition": "from_friend_tips.value==true&&birthday.value==true", "fraction": false, "max": 300, "min": 1, "order": 131, "text": "ui_birthday_string_size", "type": "slider", "value": 50 }, "birthday_string_type": { "condition": "from_friend_tips.value==true&&birthday.value==true", "options": [{ "label": "ui_birthday_string_type_detail", "value": "a" }, { "label": "ui_birthday_string_type_days", "value": "b" }], "order": 129, "text": "ui_birthday_string_type", "type": "combo", "value": "b" }, "body_color": { "condition": "background_image.value == ''", "order": 119, "text": "ui_body_color", "type": "color", "value": "rgb(22, 22, 22)" }, "color": { "order": 112, "text": "ui_color", "type": "tip" }, "date_size": { "fraction": false, "max": 300, "min": 1, "order": 104, "text": "ui_date_size", "type": "slider", "value": 60 }, "day_color": { "order": 116, "text": "ui_day_color", "type": "color", "value": "rgb(255, 253, 93)" }, "footer_slogan": { "order": 110, "text": "ui_footer_slogan", "type": "textinput", "value": "Time flows away" }, "footer_slogan_size": { "condition": "footer_slogan.value != ''", "fraction": false, "max": 300, "min": 1, "order": 111, "text": "ui_footer_slogan_size", "type": "slider", "value": 45 }, "from_friend_tips": { "order": 125, "text": "ui_from_friend_tips", "type": "bool", "value": false }, "header_slogan": { "order": 108, "text": "ui_header_slogan", "type": "textinput", "value": "时光飞逝" }, "header_slogan_size": { "condition": "header_slogan.value != ''", "fraction": false, "max": 300, "min": 1, "order": 109, "text": "ui_header_slogan_size", "type": "slider", "value": 65 }, "hello_world": { "order": 124, "text": "ui_hello_world", "type": "tip" }, "hour_color": { "order": 117, "text": "ui_hour_color", "type": "color", "value": "rgb(71, 144, 229)" }, "min_color": { "order": 118, "text": "ui_min_color", "type": "color", "value": "rgb(132, 216, 75)" }, "month_color": { "order": 115, "text": "ui_month_color", "type": "color", "value": "rgb(199, 94, 83)" }, "other_thing": { "order": 120, "text": "ui_other_thing", "type": "tip" }, "position": { "order": 100, "text": "ui_position", "type": "tip" }, "position_h": { "options": [{ "label": "ui_position_h_l", "value": "flex-start" }, { "label": "ui_position_h_c", "value": "center" }, { "label": "ui_position_h_r", "value": "flex-end" }], "order": 102, "text": "ui_position_h", "type": "combo", "value": "center" }, "position_v": { "options": [{ "label": "ui_position_v_u", "value": "flex-start" }, { "label": "ui_position_v_c", "value": "center" }, { "label": "ui_position_v_d", "value": "flex-end" }], "order": 101, "text": "ui_position_v", "type": "combo", "value": "center" }, "prefix_birthday_string": { "condition": "from_friend_tips.value==true&&birthday.value==true", "order": 127, "text": "ui_prefix_birthday_string", "type": "textinput", "value": "度过了" }, "schemecolor": { "order": 0, "text": "ui_browse_properties_scheme_color", "type": "color", "value": "rgb(28, 28, 28)" }, "suffix_birthday_string": { "condition": "from_friend_tips.value==true&&birthday.value==true", "order": 130, "text": "ui_suffix_birthday_string", "type": "textinput", "value": "天" }, "text_color": { "order": 113, "text": "ui_text_color", "type": "color", "value": "rgb(200, 200, 200)" }, "text_opacity": { "condition": "background_image.value != ''", "fraction": true, "max": 1, "min": 0, "order": 123, "precision": 2, "step": 0.1, "text": "ui_text_opacity", "type": "slider", "value": 0.6 }, "text_opacity_color": { "condition": "background_image.value != ''", "order": 122, "text": "ui_text_opacity_color", "type": "color", "value": "rgba(255, 255, 255, 0)" }, "text_size": { "order": 103, "text": "ui_text_size", "type": "tip" }, "time_size": { "fraction": false, "max": 300, "min": 1, "order": 105, "text": "ui_time_size", "type": "slider", "value": 65 }, "scroll_size": { "fraction": false, "max": 300, "min": 1, "order": 106, "precision": 2, "step": 1, "text": "ui_scroll_size", "type": "slider", "value": 85 }, "year_color": { "order": 114, "text": "ui_year_color", "type": "color", "value": "rgb(188, 189, 190)" } }
+    //         // defaultconfig['birthday_string'].value = new Date().Format("yyyy.MM.dd");
+    //         utools.dbStorage.setItem('defaultconfig', defaultconfig)
+    //         utools.dbStorage.setItem('customer', defaultconfig)
+    //         alert('首次运行提示：鼠标点击右键或utools输入time设置可设置时间条参数')
+    //         //console.log("初始化成功");
+    //     } else {
+    //         //console.log("启动");
+    //     }
+    // }
+
+    // //恢复默认配置
+    // function reDefaultConfig() {
+    //     utools.dbStorage.setItem('customer', utools.dbStorage.getItem('defaultconfig'))
+    //     setTimeout(function () {
+    //         window.readconfig = utools.dbStorage.getItem('customer')
+    //         //console.log("恢复默认配置");
+    //         refresh()
+    //     }, 500);
+    // }
+    //读取配置
+    function readConfig() {
+        return utools.dbStorage.getItem('customer')
+    }
+
+    function submitConfig(params) {
+        utools.dbStorage.setItem('miniconfig', params)
+        window.readconfig = readConfig()
+    }
+
+    // Date.prototype.Format = function (fmt) { //author: meizz 
+    //     var o = {
+    //         "M+": this.getMonth() + 1,                 //月份 
+    //         "d+": this.getDate(),                    //日 
+    //         "h+": this.getHours(),                   //小时 
+    //         "m+": this.getMinutes(),                 //分 
+    //         "s+": this.getSeconds(),                 //秒 
+    //         "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+    //         "S": this.getMilliseconds()             //毫秒 
+    //     };
+    //     if (/(y+)/.test(fmt))
+    //         fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    //     for (var k in o)
+    //         if (new RegExp("(" + k + ")").test(fmt))
+    //             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    //     return fmt;
+    // }
+    //刷新配置
+    window.magic = true
+    function refresh() {
+        clearCache()
+        //获取窗口宽度
+        window.vue.startcore()
+        let nconfig = utools.dbStorage.getItem('miniconfig')
+
+
+        // alert(magic)
+        // vue.startcore()
+        // window.magic = !window.magic
+        // if (window.magic === true) {
+
+            window.resizeTo(nconfig.width, nconfig.height)
+        //     // window.resizeTo(200, 400)
+        //     console.log("t");
+        //     alert('t')
+        // }
+        // if (window.magic === false) {
+        //     console.log("f");
+        //     alert('F')
+        //     window.resizeTo(window.innerWidth - 1, window.innerHeight - 1)
+        //     // window.resizeTo(600, 500)
+        // }
+        clearCache()
+    }
+
+
+
+    function birthday() {
+        //日期贡献算法
+        let otherVariable = {}
+        let dayMonth = [[0, 0], [31, 31], [28, 29], [31, 31], [30, 30], [31, 31], [30, 30], [31, 31], [31, 31], [30, 30], [31, 31], [30, 30], [31, 31]];
+        let LeapYear = new Function('year', 'if(((year%4)==0)&&((year%100)!=0)||((year%400)==0)){return true}return false');
+        let leap_year = 366;//闰年
+        let common_year = 365;//平年
+
+        // //console.log("startDate"+startDate);
+        // //console.log("newStartDate"+newStartDate);
+        let properties = window.readconfig
+        // let properties = {
+        //     'birthday_string': {
+        //         value: "2006.11.11"
+        //     }
+        // }
+        const now = new Date();
+        let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+        // let dif = DateDiff(startDate)
+        let newStartDate = new Date(startDate)
+        let dif = now - newStartDate
+        //console.log(Math.floor(dif / 86400000));
+        let difday = Math.floor(dif / 86400000)
+        let year = now.getFullYear() - newStartDate.getFullYear() - 1
+        //console.log(now.getFullYear(), newStartDate.getFullYear());
+        //console.log("year" + year)
+        let month = 0
+        let sum_day = 0;
+        let yearContributionDay = 0
+        let monthContributionDay = 0
+        let dayContributionDay = 0
+        let nm = now.getMonth()
+        let om = newStartDate.getMonth()
+        //console.log("now" + nm, "oldm" + om);
+        if (nm >= om) {
+            let month = nm - om
+            for (var i = 0; i <= year; i++) {
+                //console.log("LeapYear(i) ?" + i, year);
+                LeapYear(i) ? yearContributionDay += leap_year : yearContributionDay += common_year;
+            }
+            //console.log("yearContributionDay" + yearContributionDay);
+            let isLeapYear = 0
+            LeapYear(now.getFullYear()) ? isLeapYear = 1 : isLeapYear = 0;//选择二月
+            for (let i = nm; i > om; i--) {
+                //console.log('m：：：' + (i) + 'd' + dayMonth[i][isLeapYear]);
+                monthContributionDay += (dayMonth[i][isLeapYear])
+                //console.log("monthContributionDay" + monthContributionDay);
+            }
+            dayContributionDay = difday - yearContributionDay - monthContributionDay
+            //console.log("day:" + dayContributionDay);
+            //console.log(`相差${year + 1}年${month}月${dayContributionDay}天`);
+            return `${year + 1}年${month}月${dayContributionDay}`
+        } else {
+            for (var i = 0; i < year; i++) {
+                //console.log("LeapYear(i) ?" + i, year);
+                LeapYear(i) ? yearContributionDay += leap_year : yearContributionDay += common_year;
+            }
+            let t1 = 12 - newStartDate.getMonth() + now.getMonth()
+            //console.log(t1);
+            //console.log("yearContributionDay" + yearContributionDay);
+            let isLeapYear = 0
+            LeapYear(now.getFullYear()) ? isLeapYear = 1 : isLeapYear = 0;//选择二月
+            //console.log("om" + om);
+            let newMonth = 0
+            for (var i = om + 2; i <= 12; i++) {
+                newMonth++
+                //console.log('m：11：：' + (i) + 'd' + dayMonth[i][isLeapYear]);
+                monthContributionDay += dayMonth[i][isLeapYear]
+                //console.log("monthContributionDay" + monthContributionDay);
+            }
+            //console.log(newStartDate.getDate());
+            // monthContributionDay-=newStartDate.getDate()
+            // monthContributionDay+=now.getDate()
+            //console.log("-----------------" + nm);
+
+            for (let i = nm; i > 0; i--) {
+                newMonth++
+                //console.log('m：：：' + (i) + 'd' + dayMonth[i][isLeapYear]);
+                monthContributionDay += (dayMonth[i][isLeapYear])
+                //console.log("monthContributionDay" + monthContributionDay);
+            }
+            let newDay = 0
+            if (now.getDate() > newStartDate.getDate()) {
+                //console.log("> 过了 个月", newMonth + 1);
+                newDay = now.getDate() - newStartDate.getDate()
+                newMonth += 1
+            } else {
+                //console.log("< 过了 个月", newMonth);
+                newDay = dayMonth[om + 1][isLeapYear] - newStartDate.getDate() + now.getDate()
+            }
+            dayContributionDay = difday - yearContributionDay - monthContributionDay
+            //console.log("day:" + dayContributionDay);
+            return `${year}年${newMonth}月${newDay}`
+        }
+
+
+
+    }
+    let key = 0
+    let d = null
+    let cache = null
+    function clearCache() {
+        key = 0
+    }
+    function getCache() {
+        if (key == 0) {
+            d = new Date()
+            cache = birthday()
+            key = 1
+            return cache
+        } else {
+            if (d.getDate() != new Date().getDate()) {
+                cache = birthday()
+                key = 0
+            }
+            return cache
+        }
+
+    }
+    window.startVue = startVue
+    function startVue(params) {
+        if (params) {
+            console.log("startvue");
+            window.vue = new Vue({
+                el: '#app',
+                inheritAttrs: false,
+                components: {},
+                props: [],
+                data() {
+                },
+                computed: {},
+                watch: {},
+                created() { },
+                mounted() {
+                    this.startcore()
+                },
+                methods: {
+
+                    startcore() {
+
+                        // setTimeout(console.log(), 300 )
+                        ((doc, win) => {
+                            const createTextSetter = selector => {
+                                const elem = doc.querySelector(selector);
+                                let text;
+                                return newText => {
+                                    if (newText !== text) {
+                                        text = newText;
+                                        elem.textContent = newText;
+                                        return true;
+                                    }
+                                    return false;
+                                };
+                            };
+                            // console.log("createTextSetter:" + createTextSetter);
+                            const otherVariable = {
+                                set_12_24: '24',
+                                // from_friend_tips: false,
+                                birthday: false,
+                                pre_birthday: '',
+                                birthday_string: '',
+                                birthday_string_type: 'a',
+                                suf_birthday: '',
+                                text_background_color: {
+                                    rgb: '',
+                                    a: ''
+                                },
+                                body_background_color: ''
+                            }
+
+                            const timeMask = {
+                                year: doc.querySelector('#date>.mask#year>.p'),
+                                month: doc.querySelector('#date>.mask#month>.p'),
+                                d: doc.querySelector('#time>.mask#d>.p'),
+                                h: doc.querySelector('#time>.mask#h>.p'),
+                                m: doc.querySelector('#time>.mask#m>.p')
+                            };
+
+                            const setters = {
+                                time: createTextSetter('#time_div'),
+                                date: createTextSetter('#date_div')
+                            }
+
+
+                            window.readconfig = readConfig()
+                            properties = utools.dbStorage.getItem('customer')
+                            if (properties['date_size'])
+                                doc.getElementById('date').style.fontSize = properties['date_size'].value + 'px';
+                            if (properties['time_size'])
+                                doc.getElementById('time').style.fontSize = properties['time_size'].value + 'px';
+                            if (properties['header_slogan'])
+                                doc.getElementById('header_slogan').textContent = properties['header_slogan'].value;
+                            if (properties['header_slogan_size'])
+                                doc.getElementById('header_slogan').style.fontSize = properties['header_slogan_size'].value + 'px';
+                            if (properties['footer_slogan'])
+                                doc.getElementById('footer_slogan').textContent = properties['footer_slogan'].value;
+                            if (properties['footer_slogan_size'])
+                                doc.getElementById('footer_slogan').style.fontSize = properties['footer_slogan_size'].value + 'px';
+
+                            if (properties['position_h']) {
+                                doc.getElementsByTagName('body').item(0).style.alignItems = properties['position_h'].value;
+                            }
+                            if (properties['position_v']) {
+                                doc.getElementsByTagName('body').item(0).style.justifyContent = properties['position_v'].value;
+                            }
+                            if (properties['12_24']) {
+                                otherVariable.set_12_24 = properties['12_24'].value;
+                            }
+                            // if (properties['from_friend_tips']) {
+                            //     otherVariable.from_friend_tips = properties['from_friend_tips'].value;
+                            // }
+                            if (properties['birthday']) {
+                                otherVariable.birthday = properties['birthday'].value;
+                            }
+                            // console.log(properties['birthday_string']);
+                            if (properties['birthday_string']) {
+                                let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+                                otherVariable.birthday_string = (new Date(startDate)).getTime();
+                            }
+                            if (properties['prefix_birthday_string']) {
+                                otherVariable.pre_birthday = properties['prefix_birthday_string'].value;
+                            }
+                            if (properties['suffix_birthday_string']) {
+                                otherVariable.suf_birthday = properties['suffix_birthday_string'].value;
+                            }
+                            if (properties['birthday_string_size']) {
+                                doc.getElementById('birthday_div').style.fontSize = properties['birthday_string_size'].value + 'px';
+                            }
+                            if (properties['birthday_string_type']) {
+                                otherVariable.birthday_string_type = properties['birthday_string_type'].value;
+                            }
+                            // console.log(properties['background_image'].value);
+                            if (properties['background_image']) {
+                                if (!properties['background_image'].value) {
+                                    doc.getElementById('text').style.backgroundColor = otherVariable.body_background_color
+                                } else {
+                                    doc.getElementById('text').style.backgroundColor = otherVariable.text_background_color
+                                }
+                                if (!properties['background_image'].value) {
+                                    doc.getElementsByTagName('body').item(0).style.backgroundImage = 'url("' + './' + properties['background_image'].default + '")';
+                                } else {
+                                    // doc.getElementsByTagName('body').item(0).style.backgroundImage = 'url("' + 'file:///' + (properties['background_image'].value) + '")';
+
+                                    doc.getElementsByTagName('body').item(0).style.backgroundImage = `url(${properties['background_image'].value})`;
+                                }
+
+                            }
+                            if (properties['body_color']) {
+                                const color = properties['body_color'].value;
+                                // console.log(color);
+                                doc.getElementById('text').style.backgroundColor = 'rgba(' + color + ',' + otherVariable.text_background_color.a + ')';
+                                doc.getElementsByTagName('body').item(0).style.backgroundColor = color
+                                otherVariable.body_background_color = color;
+                            }
+                            if (properties['text_opacity_color'] && doc.getElementsByTagName('body').item(0).style.backgroundImage.toString() !== 'url("file:///")') {
+                                const customColor = properties['text_opacity_color'].value;
+                                // doc.getElementById('text').style.backgroundColor = 'rgba(' + customColor + ',' + (otherVariable.text_background_color.a ? otherVariable.text_background_color.a : 0) + ')';
+                                doc.getElementById('text').style.backgroundColor = properties['text_opacity_color'].value
+                                otherVariable.text_background_color.rgb = customColor;
+                            }
+                            //to
+                            if (properties['min_color']) {
+                                const backgroundColor = properties['min_color'].value
+                                doc.getElementById('m').style.borderColor = backgroundColor;
+                                timeMask.m.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['hour_color']) {
+                                const backgroundColor = properties['hour_color'].value
+                                doc.getElementById('h').style.borderColor = backgroundColor;
+                                timeMask.h.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['month_color']) {
+                                const backgroundColor = properties['month_color'].value
+                                doc.getElementById('month').style.borderColor = backgroundColor;
+                                timeMask.month.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['year_color']) {
+                                const backgroundColor = properties['year_color'].value
+                                doc.getElementById('year').style.borderColor = backgroundColor;
+                                timeMask.year.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['day_color']) {
+                                const backgroundColor = properties['day_color'].value
+                                doc.getElementById('d').style.borderColor = backgroundColor;
+                                timeMask.d.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['text_color']) {
+                                doc.getElementById('text').style.color = '' + properties['text_color'].value + '';
+                            }
+                            if (properties['text_opacity']) {
+                                doc.getElementById('text').style.backgroundColor = otherVariable.text_background_color.rgb
+                                // otherVariable.text_background_color.a = properties['text_opacity'].value;
+                            }
+                            if (properties['scroll_size']) {
+                                for (const elementsByClassNameElement of doc.getElementsByClassName(`mask`)) {
+                                    elementsByClassNameElement.style.width = (properties['scroll_size'].value * 5.3) + 'px';
+
+                                }
+                            }
+
+
+                            console.log("MINI addEventListener DOMContentLoaded ");
+                            const updateText = _ => {
+                                const now = new Date();
+                                setters.date(now.getFullYear() + '.' + (now.getMonth() + 1).toFixed().padStart(2, '0') + '.' + now.getDate().toFixed().padStart(2, '0'));
+                                let timeDiv;
+                                if (otherVariable.set_12_24 === '12') {
+                                    let hour = now.getHours();
+                                    hour = hour > 12 ? hour - 12 : hour;
+                                    timeDiv = hour.toFixed().padStart(2, '0');
+                                } else {
+                                    timeDiv = now.getHours().toFixed().padStart(2, '0');
+                                }
+                                timeDiv += ':' + now.getMinutes().toFixed().padStart(2, '0') + ':'
+                                const second = now.getSeconds();
+                                if (setters.time(timeDiv + second.toFixed().padStart(2, '0'))) {
+                                    const minAndSec = second + 60 * now.getMinutes();
+                                    const day = (((now.getDate() - 1) * 86400 + minAndSec + (3600 * now.getHours())) / (new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() * 86400))
+                                    timeMask.year.style.maxWidth = `${(now.getMonth() + day) / 0.12}%`;
+                                    timeMask.month.style.maxWidth = `${day * 100}%`;
+                                    timeMask.d.style.maxWidth = `${(minAndSec + 3600 * now.getHours()) / 864}%`;
+                                    timeMask.h.style.maxWidth = `${minAndSec / 36}%`;
+                                    timeMask.m.style.maxWidth = `${second / 0.6}%`;
+                                }
+                                if (otherVariable.birthday === true) {
+                                    // doc.getElementById('friend_div').style.display = 'inline';
+                                    if (otherVariable.birthday === true) {
+                                        // doc.querySelector('.birthday').style.display = 'inline';
+                                        let totalDays;
+                                        let number = now.getTime() - otherVariable.birthday_string;
+                                        if (otherVariable.birthday_string_type === 'b') {
+                                            totalDays = Math.floor(number / 86400000);
+                                        } else if (otherVariable.birthday_string_type === 'a') {
+                                            totalDays = window.getCache()
+                                            // let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+                                            // let newStartDate = new Date(startDate)
+                                            // let year = now.getFullYear() - newStartDate.getFullYear()
+                                            // let month = now.getMonth() - newStartDate.getMonth()
+                                            // let day = now.getDate() - newStartDate.getDate()
+                                            // totalDays = year + '年' + month + '个月零' + day;
+                                            // totalDays = Math.floor(number / (86400000 * 365)) + '年' + Math.floor(((number / 86400000) % 365) / 30) + '个月零' + Math.floor(((number / 86400000) % 365) % 30);
+                                        }
+                                        doc.getElementById('birthday_div').textContent = otherVariable.pre_birthday + totalDays + otherVariable.suf_birthday;
+                                    } else {
+                                        doc.querySelector('.birthday').style.display = 'none';
+                                    }
+                                } else {
+                                    doc.getElementById('friend_div').style.display = 'none';
+                                }
+                            };
+                            setInterval(updateText, 1000);
+                            updateText();
+
+
+
+
+                            console.log("MINi---addEventListener---");
+                            properties = window.readconfig
+
+                            let miniconfig = utools.dbStorage.getItem('miniconfig')
+
+                            let textRatio = miniconfig.textRatio
+                            let scrollRatio = miniconfig.scrollRatio
+
+                            if (properties['date_size'])
+                                doc.getElementById('date').style.fontSize = properties['date_size'].value / textRatio + 'px';
+                            if (properties['time_size'])
+                                doc.getElementById('time').style.fontSize = properties['time_size'].value / textRatio + 'px';
+                            if (properties['header_slogan'])
+                                doc.getElementById('header_slogan').textContent = properties['header_slogan'].value;
+                            if (properties['header_slogan_size'])
+                                doc.getElementById('header_slogan').style.fontSize = properties['header_slogan_size'].value / textRatio + 'px';
+                            if (properties['footer_slogan'])
+                                doc.getElementById('footer_slogan').textContent = properties['footer_slogan'].value;
+                            if (properties['footer_slogan_size'])
+                                doc.getElementById('footer_slogan').style.fontSize = properties['footer_slogan_size'].value / textRatio + 'px';
+
+                            if (properties['position_h']) {
+                                doc.getElementsByTagName('body').item(0).style.alignItems = properties['position_h'].value / textRatio;
+                            }
+                            if (properties['position_v']) {
+                                doc.getElementsByTagName('body').item(0).style.justifyContent = properties['position_v'].value / textRatio;
+                            }
+                            if (properties['12_24']) {
+                                otherVariable.set_12_24 = properties['12_24'].value;
+                            }
+                            // if (properties['from_friend_tips']) {
+                            //     otherVariable.from_friend_tips = properties['from_friend_tips'].value;
+                            // }
+                            if (properties['birthday']) {
+                                otherVariable.birthday = properties['birthday'].value;
+                            }
+                            if (properties['birthday_string']) {
+                                let startDate = properties['birthday_string'].value.replace(new RegExp('\\D', 'g'), '/');
+                                otherVariable.birthday_string = (new Date(startDate)).getTime();
+                            }
+                            if (properties['prefix_birthday_string']) {
+                                otherVariable.pre_birthday = properties['prefix_birthday_string'].value;
+                            }
+                            if (properties['suffix_birthday_string']) {
+                                otherVariable.suf_birthday = properties['suffix_birthday_string'].value;
+                            }
+                            if (properties['birthday_string_size']) {
+                                doc.getElementById('birthday_div').style.fontSize = properties['birthday_string_size'].value / textRatio + 'px';
+                            }
+                            if (properties['birthday_string_type']) {
+                                otherVariable.birthday_string_type = properties['birthday_string_type'].value;
+                            }
+                            // console.log(properties['background_image'].value);
+                            if (properties['background_image']) {
+                                if (!properties['background_image'].value) {
+                                    doc.getElementById('text').style.backgroundColor = otherVariable.body_background_color
+                                } else {
+                                    doc.getElementById('text').style.backgroundColor = otherVariable.text_background_color
+                                }
+                                if (!properties['background_image'].value) {
+                                    doc.getElementsByTagName('body').item(0).style.backgroundImage = 'url("' + './' + properties['background_image'].default + '")';
+                                } else {
+                                    // doc.getElementsByTagName('body').item(0).style.backgroundImage = 'url("' + 'file:///' + (properties['background_image'].value) + '")';
+
+                                    doc.getElementsByTagName('body').item(0).style.backgroundImage = `url(${properties['background_image'].value})`;
+                                }
+
+                            }
+                            if (properties['body_color']) {
+                                const color = properties['body_color'].value;
+                                // console.log(color);
+                                doc.getElementById('text').style.backgroundColor = 'rgba(' + color + ',' + otherVariable.text_background_color.a + ')';
+                                doc.getElementsByTagName('body').item(0).style.backgroundColor = color
+                                otherVariable.body_background_color = color;
+                            }
+                            if (properties['text_opacity_color'] && doc.getElementsByTagName('body').item(0).style.backgroundImage.toString() !== 'url("file:///")') {
+                                const customColor = properties['text_opacity_color'].value;
+                                // doc.getElementById('text').style.backgroundColor = 'rgba(' + customColor + ',' + (otherVariable.text_background_color.a ? otherVariable.text_background_color.a : 0) + ')';
+                                doc.getElementById('text').style.backgroundColor = properties['text_opacity_color'].value
+                                otherVariable.text_background_color.rgb = customColor;
+                            }
+                            //to
+                            if (properties['min_color']) {
+                                const backgroundColor = properties['min_color'].value
+                                doc.getElementById('m').style.borderColor = backgroundColor;
+                                timeMask.m.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['hour_color']) {
+                                const backgroundColor = properties['hour_color'].value
+                                doc.getElementById('h').style.borderColor = backgroundColor;
+                                timeMask.h.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['month_color']) {
+                                const backgroundColor = properties['month_color'].value
+                                doc.getElementById('month').style.borderColor = backgroundColor;
+                                timeMask.month.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['year_color']) {
+                                const backgroundColor = properties['year_color'].value
+                                doc.getElementById('year').style.borderColor = backgroundColor;
+                                timeMask.year.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['day_color']) {
+                                const backgroundColor = properties['day_color'].value
+                                doc.getElementById('d').style.borderColor = backgroundColor;
+                                timeMask.d.style.backgroundColor = backgroundColor;
+                            }
+                            if (properties['text_color']) {
+                                doc.getElementById('text').style.color = '' + properties['text_color'].value + '';
+                            }
+                            if (properties['text_opacity']) {
+                                doc.getElementById('text').style.backgroundColor = otherVariable.text_background_color.rgb
+                                // otherVariable.text_background_color.a = properties['text_opacity'].value;
+                            }
+                            if (properties['scroll_size']) {
+                                for (const elementsByClassNameElement of doc.getElementsByClassName(`mask`)) {
+                                    elementsByClassNameElement.style.width = (properties['scroll_size'].value * 5.3) / scrollRatio + 'px';
+
+                                }
+                            }
+
+
+                        })(document, window);
+                    },
+
+                }
+            })
+
+        }
+    }
+
+</script>
+
+<style>
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-app-region: drag;
+    }
+</style>
+
+
+</html>

@@ -1,4 +1,3 @@
-
 utools.onPluginReady(() => {
     //console.log('插件装配完成，已准备好')
     // utools.dbStorage.setItem(key, value)
@@ -10,35 +9,149 @@ utools.onPluginReady(() => {
     window.submitConfig = submitConfig
     window.refresh = refresh
     window.getCache = getCache
+    global.window.abc = "123"
     window.readconfig = readConfig()
+    window.mini = false
+    if (!utools.dbStorage.getItem('miniconfig')){
+        let miniconfig = {
+            height: 300,
+            width: 440,
+            textRatio: 2,
+            scrollRatio: 1.5
+        }
+        utools.dbStorage.setItem('miniconfig', miniconfig)
+    }
 
     if (window.readconfig['birthday_string'].value === '') {
         window.readconfig['birthday_string'].value = new Date().Format("yyyy.MM.dd");
     }
     // start core index.js
+    window.miniconfig = utools.dbStorage.getItem('miniconfig')
     utools.onPluginEnter(({ code, type, payload }) => {
         if (code === 'settings') {
             //console.log("Settings");
+
             window.vue._data.dialogVisible = true
-        } else {
+            utools.onPluginOut(() => { })
+        } if (code === 'time') {
+
             window.vue._data.dialogVisible = false
+            utools.onPluginOut(() => { })
+        }
+        if (code === 'minizd') {
+            mini = true
+            utools.outPlugin()
+            utools.onPluginOut(() => {
+                global.window.ubWindow = utools.createBrowserWindow('mini.html', {
+                    show: false,
+                    title: 'MiniTime',
+                    frame: false,
+                    titleBarStyle: 'hidden',
+                    // height: 300,
+                    // width: 440
+                    height: window.miniconfig.height + 0,
+                    width: window.miniconfig.width + 0
+                    // webPreferences: {
+                    //     preload: 'preload.js'
+                    // }
+
+                }, () => {
+                    // 显示
+                    // ubWindow.webContents.send('setSize')
+                    // require('electron').ipcRenderer.sendTo(ubWindow.webContents.id, 'setSize')、
+
+                    require('electron').ipcRenderer.on('setSize', function (event, arg) {
+                        // ubWindow.setSize(1440, 900)
+                        console.log(arg);
+                    })
+                    ubWindow.show()
+                    ubWindow.setAlwaysOnTop(true)
+                    refresh()
+
+
+                })
+
+
+                refresh()
+            })
+        }
+        if (code === 'mini') {
+            mini = true
+            utools.outPlugin()
+            utools.onPluginOut(() => {
+                global.window.ubWindow = utools.createBrowserWindow('mini.html', {
+                    show: false,
+                    title: 'MiniTime',
+                    frame: false,
+                    titleBarStyle: 'hidden',
+                    height: 300,
+                    width: 440
+                    // webPreferences: {
+                    //     preload: 'preload.js'
+                    // }
+                }, () => {
+                    // 显示
+                    ubWindow.show()
+                    // ubWindow.setAlwaysOnTop(true)
+
+                    refresh()
+
+                })
+            })
+
+            // utools.hideMainWindow()
+        }
+        if (code === 'nixieclock') {
+            global.window.ubWindow = utools.createBrowserWindow('./nixieclock/index.html', {
+                show: false,
+                title: 'NixieClock',
+                frame: false,
+                titleBarStyle: 'hidden',
+                height: 500,
+                width: 1000
+                // webPreferences: {
+                //     preload: 'preload.js'
+                // }
+            }, () => {
+                // 显示
+                ubWindow.show()
+                ubWindow.setAlwaysOnTop(true)
+                utools.hideMainWindow()
+            })
         }
     })
+    // if (!window.mini) {
+    //     console.log("window.startVue(true)");
     window.startVue(true)
+    // }
     // window.vue._data.startApp = true
 })
+
+utools.onPluginDetach(() => {
+    console.log('插件被分离')
+    // alert("mini")
+
+})
+
 //启动初始化
 
 function start() {
     if (!utools.dbStorage.getItem('customer')) {
-        let now =new Date().Format("yyyy.MM.dd")
+        let now = new Date().Format("yyyy.MM.dd")
         //console.log(now);
         let defaultconfig
         defaultconfig = { "12_24": { "options": [{ "label": "ui_12_24_24", "value": "24" }, { "label": "ui_12_24_12", "value": "12" }], "order": 107, "text": "12/24", "type": "combo", "value": 12 }, "background_image": { "default": "./defaultBackground.png", "value": "" }, "birthday": { "condition": "from_friend_tips.value==true", "order": 126, "text": "ui_birthday", "type": "bool", "value": true }, "birthday_string": { "condition": "from_friend_tips.value==true&&birthday.value==true", "order": 128, "text": "ui_birthday_string", "type": "textinput", "value": now }, "birthday_string_size": { "condition": "from_friend_tips.value==true&&birthday.value==true", "fraction": false, "max": 300, "min": 1, "order": 131, "text": "ui_birthday_string_size", "type": "slider", "value": 50 }, "birthday_string_type": { "condition": "from_friend_tips.value==true&&birthday.value==true", "options": [{ "label": "ui_birthday_string_type_detail", "value": "a" }, { "label": "ui_birthday_string_type_days", "value": "b" }], "order": 129, "text": "ui_birthday_string_type", "type": "combo", "value": "b" }, "body_color": { "condition": "background_image.value == ''", "order": 119, "text": "ui_body_color", "type": "color", "value": "rgb(22, 22, 22)" }, "color": { "order": 112, "text": "ui_color", "type": "tip" }, "date_size": { "fraction": false, "max": 300, "min": 1, "order": 104, "text": "ui_date_size", "type": "slider", "value": 60 }, "day_color": { "order": 116, "text": "ui_day_color", "type": "color", "value": "rgb(255, 253, 93)" }, "footer_slogan": { "order": 110, "text": "ui_footer_slogan", "type": "textinput", "value": "Time flows away" }, "footer_slogan_size": { "condition": "footer_slogan.value != ''", "fraction": false, "max": 300, "min": 1, "order": 111, "text": "ui_footer_slogan_size", "type": "slider", "value": 45 }, "from_friend_tips": { "order": 125, "text": "ui_from_friend_tips", "type": "bool", "value": false }, "header_slogan": { "order": 108, "text": "ui_header_slogan", "type": "textinput", "value": "时光飞逝" }, "header_slogan_size": { "condition": "header_slogan.value != ''", "fraction": false, "max": 300, "min": 1, "order": 109, "text": "ui_header_slogan_size", "type": "slider", "value": 65 }, "hello_world": { "order": 124, "text": "ui_hello_world", "type": "tip" }, "hour_color": { "order": 117, "text": "ui_hour_color", "type": "color", "value": "rgb(71, 144, 229)" }, "min_color": { "order": 118, "text": "ui_min_color", "type": "color", "value": "rgb(132, 216, 75)" }, "month_color": { "order": 115, "text": "ui_month_color", "type": "color", "value": "rgb(199, 94, 83)" }, "other_thing": { "order": 120, "text": "ui_other_thing", "type": "tip" }, "position": { "order": 100, "text": "ui_position", "type": "tip" }, "position_h": { "options": [{ "label": "ui_position_h_l", "value": "flex-start" }, { "label": "ui_position_h_c", "value": "center" }, { "label": "ui_position_h_r", "value": "flex-end" }], "order": 102, "text": "ui_position_h", "type": "combo", "value": "center" }, "position_v": { "options": [{ "label": "ui_position_v_u", "value": "flex-start" }, { "label": "ui_position_v_c", "value": "center" }, { "label": "ui_position_v_d", "value": "flex-end" }], "order": 101, "text": "ui_position_v", "type": "combo", "value": "center" }, "prefix_birthday_string": { "condition": "from_friend_tips.value==true&&birthday.value==true", "order": 127, "text": "ui_prefix_birthday_string", "type": "textinput", "value": "度过了" }, "schemecolor": { "order": 0, "text": "ui_browse_properties_scheme_color", "type": "color", "value": "rgb(28, 28, 28)" }, "suffix_birthday_string": { "condition": "from_friend_tips.value==true&&birthday.value==true", "order": 130, "text": "ui_suffix_birthday_string", "type": "textinput", "value": "天" }, "text_color": { "order": 113, "text": "ui_text_color", "type": "color", "value": "rgb(200, 200, 200)" }, "text_opacity": { "condition": "background_image.value != ''", "fraction": true, "max": 1, "min": 0, "order": 123, "precision": 2, "step": 0.1, "text": "ui_text_opacity", "type": "slider", "value": 0.6 }, "text_opacity_color": { "condition": "background_image.value != ''", "order": 122, "text": "ui_text_opacity_color", "type": "color", "value": "rgba(255, 255, 255, 0)" }, "text_size": { "order": 103, "text": "ui_text_size", "type": "tip" }, "time_size": { "fraction": false, "max": 300, "min": 1, "order": 105, "text": "ui_time_size", "type": "slider", "value": 65 }, "scroll_size": { "fraction": false, "max": 300, "min": 1, "order": 106, "precision": 2, "step": 1, "text": "ui_scroll_size", "type": "slider", "value": 85 }, "year_color": { "order": 114, "text": "ui_year_color", "type": "color", "value": "rgb(188, 189, 190)" } }
         // defaultconfig['birthday_string'].value = new Date().Format("yyyy.MM.dd");
+        let miniconfig = {
+            height: 300,
+            width: 440,
+            textRatio: 2,
+            scrollRatio: 1.5
+        }
+        utools.dbStorage.setItem('miniconfig', miniconfig)
         utools.dbStorage.setItem('defaultconfig', defaultconfig)
         utools.dbStorage.setItem('customer', defaultconfig)
-        alert('首次运行提示：鼠标点击右键或utools输入time设置可设置时间条参数')
+        alert('首次运行提示：\n鼠标点击右键或utools输入time设置可设置时间条参数。\nMini模式按"-","+"可调整显示大小')
         //console.log("初始化成功");
     } else {
         //console.log("启动");
@@ -88,6 +201,12 @@ function refresh() {
     window.magic = -window.magic
     let h = document.body.scrollHeight
     utools.setExpendHeight(h + window.magic)
+    if (window.mini) {
+        ubWindow.setSize(ubWindow.getSize()[0] + window.magic, ubWindow.getSize()[1])
+
+    }
+
+
     clearCache()
 }
 
@@ -122,7 +241,7 @@ function birthday() {
     let dif = now - newStartDate
     //console.log(Math.floor(dif / 86400000));
     let difday = Math.floor(dif / 86400000)
-    let year = now.getFullYear() - newStartDate.getFullYear()-1
+    let year = now.getFullYear() - newStartDate.getFullYear() - 1
     //console.log(now.getFullYear(), newStartDate.getFullYear());
     //console.log("year" + year)
     let month = 0
@@ -184,7 +303,7 @@ function birthday() {
         if (now.getDate() > newStartDate.getDate()) {
             //console.log("> 过了 个月", newMonth + 1);
             newDay = now.getDate() - newStartDate.getDate()
-            newMonth+=1
+            newMonth += 1
         } else {
             //console.log("< 过了 个月", newMonth);
             newDay = dayMonth[om + 1][isLeapYear] - newStartDate.getDate() + now.getDate()
@@ -200,7 +319,7 @@ function birthday() {
 let key = 0
 let d = null
 let cache = null
-function clearCache(){
+function clearCache() {
     key = 0
 }
 function getCache() {

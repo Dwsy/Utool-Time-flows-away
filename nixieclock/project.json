@@ -1,0 +1,93 @@
+{
+	"description" : "添加功能：点击时钟，显示世界线变动率\r\n\r\n更新：\r\n添加了自定义背景图片功能\r\n添加了自定义时钟透明度 功能\r\n\r\nEL PSY CONGROO",
+	"file" : "index.html",
+	"general" : 
+	{
+		"properties" : 
+		{
+			"CPosition" : 
+			{
+				"text" : "居中",
+				"type" : "bool",
+				"value" : true
+			},
+			"Drag" : 
+			{
+				"condition" : "!CPosition.value",
+				"text" : "锁定",
+				"type" : "bool",
+				"value" : false
+			},
+			"abool" : 
+			{
+				"text" : "使用默认壁纸",
+				"type" : "bool",
+				"value" : true
+			},
+			"balpha" : 
+			{
+				"max" : 100,
+				"min" : 0,
+				"text" : "透明度",
+				"type" : "slider",
+				"value" : 100
+			},
+			"bimage" : 
+			{
+				"text" : "设置壁纸",
+				"type" : "file"
+			},
+			"combo" : 
+			{
+				"options" : 
+				[
+					{
+						"label" : "填充",
+						"value" : "cover"
+					},
+					{
+						"label" : "拉伸",
+						"value" : "contain"
+					},
+					{
+						"label" : "平铺",
+						"value" : "auto"
+					}
+				],
+				"text" : "壁纸显示方式",
+				"type" : "combo",
+				"value" : "cover"
+			},
+			"schemecolor" : 
+			{
+				"order" : 0,
+				"text" : "ui_browse_properties_scheme_color",
+				"type" : "color",
+				"value" : "0 0 0"
+			},
+			"time1" : 
+			{
+				"options" : 
+				[
+					{
+						"label" : "12h制",
+						"value" : 12
+					},
+					{
+						"label" : "24h制",
+						"value" : 24
+					}
+				],
+				"text" : "小时制",
+				"type" : "combo",
+				"value" : 12
+			}
+		}
+	},
+	"preview" : "preview.jpg",
+	"tags" : [ "Anime" ],
+	"title" : "辉光钟（世界线变动率探测仪）",
+	"type" : "web",
+	"visibility" : "public",
+	"workshopid" : 883945381
+}
